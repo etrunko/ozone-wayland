@@ -73,7 +73,7 @@ void WaylandWindow::SetWindowTitle(const string16& title) {
 
 void WaylandWindow::Maximize()
 {
-  NOTIMPLEMENTED();
+  SetShellAttributes(MAXIMIZED);
 }
 
 void WaylandWindow::Minimize()
@@ -83,7 +83,7 @@ void WaylandWindow::Minimize()
 
 void WaylandWindow::Restore()
 {
-  NOTIMPLEMENTED();
+  SetShellAttributes(TOPLEVEL);
 }
 
 void WaylandWindow::ToggleFullscreen()
@@ -125,6 +125,9 @@ bool WaylandWindow::SetBounds(const gfx::Rect& new_bounds)
 {
   int width = new_bounds.width();
   int height = new_bounds.height();
+
+  LOG(INFO) << "new bounds w: " << width << " height: " << height;
+  saved_allocation_ = allocation_;
   allocation_ = gfx::Rect(allocation_.x(), allocation_.y(), width, height);
   if (!shell_surface_ || !window_)
       return false;

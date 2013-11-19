@@ -75,6 +75,9 @@ void WaylandShellSurface::UpdateShellSurface(WaylandWindow::ShellType type,
                                     0,
                                     NULL);
     break;
+  case WaylandWindow::MAXIMIZED:
+    wl_shell_surface_set_maximized(shell_surface_, NULL);
+    break;
   case WaylandWindow::CUSTOM:
       NOTREACHED() << "Unsupported shell type: " << type;
     break;

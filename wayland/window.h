@@ -26,7 +26,8 @@ class WaylandWindow {
     TOPLEVEL,
     FULLSCREEN,
     TRANSIENT,
-    CUSTOM
+    CUSTOM,
+    MAXIMIZED
   };
 
   typedef unsigned ShellType;
@@ -66,6 +67,7 @@ class WaylandWindow {
   WaylandShellSurface* shell_surface_;
   EGLWindow* window_;
 
+  gfx::Rect saved_allocation_;
   gfx::Rect allocation_;
   ShellType type_;
   unsigned handle_;
