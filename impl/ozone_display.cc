@@ -20,6 +20,10 @@
 #include "base/native_library.h"
 #include "content/child/child_process.h"
 
+#include "base/command_line.h"
+#include "content/public/common/content_switches.h"
+#include "ui/gl/gl_surface.h"
+
 namespace ozonewayland {
 
 OzoneDisplay* OzoneDisplay::instance_ = NULL;
@@ -80,6 +84,9 @@ gfx::SurfaceFactoryOzone::HardwareState OzoneDisplay::InitializeHardware()
 
   if (initialized_state_ != gfx::SurfaceFactoryOzone::INITIALIZED)
     LOG(ERROR) << "OzoneDisplay failed to initialize hardware";
+  else if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kSingleProcess) ||
+      CommandLine::ForCurrentProcess()->HasSwitch(switches::kInProcessGPU))
+      ; // intentional
   else if (!content::ChildProcess::current()) {
     // In the multi-process mode, DisplayChannel (in GPU process side) is in
     // charge of establishing an IPC channel with DisplayChannelHost (in
@@ -108,7 +115,17 @@ void OzoneDisplay::ShutdownHardware()
 gfx::AcceleratedWidget OzoneDisplay::GetAcceleratedWidget()
 {
   static int opaque_handle = 0;
-  // Ensure dispatcher is initialized.
+
+  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kSingleProcess) ||
+      CommandLine::ForCurrentProcess()->HasSwitch(switches::kInProcessGPU)) {
+    // For single process and in-process GPU mode, we need to load and
+    // initialize the GL implementation and locate the GL entry points here.
+    if (!gfx::GLSurface::InitializeOneOff()) {
+      VLOG(1) << "gfx::GLSurface::InitializeOneOff()";
+    }
+  }
+
+ // Ensure dispatcher is initialized.
   if (!dispatcher_)
     InitializeDispatcher();
 
