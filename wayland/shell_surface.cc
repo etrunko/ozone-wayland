@@ -58,6 +58,7 @@ void WaylandShellSurface::UpdateShellSurface(WaylandWindow::ShellType type,
                                              unsigned x,
                                              unsigned y) const
 {
+  LOG(INFO) << "***** UPDATE x: " << x << " y: " << y;
   switch (type) {
   case WaylandWindow::TOPLEVEL:
     wl_shell_surface_set_toplevel(shell_surface_);
@@ -96,6 +97,7 @@ void WaylandShellSurface::HandleConfigure(void *data,
                                           int32_t width,
                                           int32_t height)
 {
+  LOG(INFO) << "***** CONFIGURE w: " << width << " h: " << height;
   WaylandWindow *window = static_cast<WaylandWindow*>(data);
   window->SetBounds(gfx::Rect(0, 0, width, height));
 }

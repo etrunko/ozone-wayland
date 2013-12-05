@@ -3,6 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "ozone/impl/desktop_root_window_host_wayland.h"
+
 #include "ozone/wayland/window.h"
 
 #include "ozone/wayland/display.h"
@@ -125,14 +127,20 @@ bool WaylandWindow::SetBounds(const gfx::Rect& new_bounds)
 {
   int width = new_bounds.width();
   int height = new_bounds.height();
+  bool ret = false;
 
   LOG(INFO) << "new bounds w: " << width << " height: " << height;
   saved_allocation_ = allocation_;
   allocation_ = gfx::Rect(allocation_.x(), allocation_.y(), width, height);
   if (!shell_surface_ || !window_)
-      return false;
+      return ret;
 
-  return window_->Resize(shell_surface_->Surface(), width, height);
+  ret = window_->Resize(shell_surface_->Surface(), width, height);
+
+  DesktopRootWindowHostWayland* drwh = DesktopRootWindowHostWayland::GetHostForAcceleratedWidget(handle_);
+  drwh->delegate_->OnHostResized(allocation_.size());
+
+  return ret;
 }
 
 }  // namespace ozonewayland

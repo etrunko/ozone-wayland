@@ -216,6 +216,7 @@ class VIEWS_EXPORT DesktopRootWindowHostWayland :
   static std::list<gfx::AcceleratedWidget>* open_windows_;
 
   DISALLOW_COPY_AND_ASSIGN(DesktopRootWindowHostWayland);
+  friend class WaylandWindow;
 };
 
 }  // namespace ozonewayland
